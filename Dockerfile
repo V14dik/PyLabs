@@ -1,9 +1,7 @@
-FROM python
+FROM python:3.9
 
-RUN mkdir -p /usr/src/app/
-WORKDIR /usr/src/app/
 
-COPY . /usr/src/app/
+COPY py1.py ./
 
-CMD ["python3","py1.py"]
+CMD ["python3","./py1.py"]
 

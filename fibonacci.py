@@ -1,17 +1,18 @@
+#!/usr/bin/env python3
+
 import logging
 import sys
-
 
 logging.basicConfig(level=logging.INFO, stream=sys.stdout, format="%(message)s")
 logger = logging.getLogger(__name__)
 
 
-
 def fib(n):
-    if n==1: return 0
-    if n == 2: return 1
+    if n == 1:
+        return 0
+    if n == 2:
+        return 1
     return fib(n - 1) + fib(n - 2)
-
 
 
 def main():

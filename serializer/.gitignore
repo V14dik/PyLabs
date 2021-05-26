@@ -27,6 +27,7 @@ __pycache__/
 *.so
 
 # Distribution / packaging
+.setup.py.swp
 .Python
 build/
 develop-eggs/

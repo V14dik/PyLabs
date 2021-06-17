@@ -15,7 +15,12 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from workouts.views import add_workout, delete_workout, see_workouts, add_user
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('add_workout/', add_workout),
+    path('delete_workout/', delete_workout),
+    path('see_workouts/', see_workouts),
+    path('add_user/', add_user),
 ]

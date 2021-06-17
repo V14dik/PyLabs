@@ -3,5 +3,5 @@ from django.db import models
 
 
 class User(AbstractUser):
-	is_ban = models.BooleanField()
-	
+	is_ban = models.BooleanField(default = False)
+	u_id = models.CharField(max_length = 100)

@@ -5,9 +5,9 @@ from users.models import User
 
 class Workout(models.Model):
 	name  = models.CharField(max_length = 20)
-	date = models.DateField(default = datetime.date.today)
-	time = models.TimeField(default = datetime.time(9, 00))
-	user = models.ForeignKey(User, on_delete = models.CASCADE)
+	date = models.CharField(default = datetime.date.today,max_length = 10)
+	time = models.CharField(default = datetime.time(9, 00), max_length = 5)
+	user = models.CharField(default = 0, max_length = 100)
 
 
 class Exercise(models.Model):
@@ -16,6 +16,6 @@ class Exercise(models.Model):
 	
 
 class WorkoutExercises(models.Model):
-	workout = models.OneToOneField(Workout, on_delete = models.CASCADE)
-	number = models.IntegerField(default = 15)
+	workout = models.ForeignKey(Workout, on_delete = models.CASCADE)
+	number = models.CharField(default = 15, max_length = 20)
 	exercises = models.ForeignKey(Exercise, on_delete = models.CASCADE)

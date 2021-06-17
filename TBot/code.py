@@ -3,6 +3,7 @@ import config
 #import keyboards as kb
 import aiohttp
 import asyncio
+import json
 
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from aiogram.dispatcher import FSMContext
@@ -116,13 +117,18 @@ async def echo(message: types.Message):
 async def echo(message: types.Message):
 
     async with aiohttp.ClientSession() as session:
-        async with session.get(f"http://localhost:8000/see_workouts/", json = message.from_user.id) as response:
+        async with session.get(f"http://localhost:8000/see_workouts/?u_id={message.from_user.id}") as response:
 
             print("Status:", response.status)
 
             html = await response.text()
-            print(html)
-            await message.answer(html)
+            html = json.loads(html)
+            for w in html:
+                my_string = ''
+                my_string += w['workout']['name']+ '\n' + w['workout']['date'] + '\n' + w['workout']['time'] + '\n'
+                for ex in w['exercises']:
+                    my_string += ex['name'] + ' - ' + ex['number'] + '\n'
+                await message.answer(my_string)
 
 
 @dp.message_handler()

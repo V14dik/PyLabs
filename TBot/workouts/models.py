@@ -7,12 +7,13 @@ class Workout(models.Model):
 	name  = models.CharField(max_length = 20)
 	date = models.CharField(default = datetime.date.today,max_length = 10)
 	time = models.CharField(default = datetime.time(9, 00), max_length = 5)
-	user = models.CharField(default = 0, max_length = 100)
+	#ForeignKey
+	user = models.ForeignKey(User, on_delete = models.CASCADE)
 
 
 class Exercise(models.Model):
 	name = models.CharField(max_length = 20)
-	workouts = models.ManyToManyField(Workout, through = "WorkoutExercises")
+	workouts = models.ManyToManyField(Workout, through = "WorkoutExercises", related_name = 'exercises')
 	
 
 class WorkoutExercises(models.Model):

@@ -18,7 +18,7 @@ def add_user(request):
     try:
         user, _ = User.objects.get_or_create(u_id = new_user_i)
     except:
-        pass
+        return HttpResponse("Welcome!")
     return HttpResponse()
 
 
@@ -52,9 +52,12 @@ def add_workout(request):
 
 @csrf_exempt
 def delete_workout(request):
-    if request.method != 'DELET':
+    if request.method != 'GET':
         return HttpResponse()
-    print('+' + request.body + '+')
+    name = request.GET.get('name')
+    date = request.GET.get('date')
+    workouts = Workout.objects.filter(name = name, date = date).delete()
+    return HttpResponse('Workout deleted!')
 
 
 @csrf_exempt
@@ -62,7 +65,6 @@ def see_workouts(request):
     if request.method != 'GET':
         return HttpResponse()
     u_id = request.GET.get('u_id')
-    #user_id=u_id
     workouts_arr = []
     workouts = Workout.objects.filter(user__u_id = u_id).all()
     for w in workouts:
@@ -76,7 +78,6 @@ def see_workouts(request):
         'name':w.name,
         'date':w.date,
         'time':w.time,
-        'user':w.user.u_id
         }, 'exercises':exercises_dict}
         
         workouts_arr.append(work)

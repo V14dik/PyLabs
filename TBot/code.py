@@ -1,6 +1,6 @@
 import logging
 import config
-#import keyboards as kb
+import keyboards as kb
 import aiohttp
 import asyncio
 import json
@@ -10,6 +10,7 @@ from aiogram.dispatcher import FSMContext
 from aiogram import Bot, Dispatcher, executor, types
 from aiogram.dispatcher.filters import Text, Command
 from states.add_work import AddWorkout
+from states.delete_workout import DeleteWorkout
 
 
 # Configure logging
@@ -26,7 +27,7 @@ dp = Dispatcher(bot, storage=storage)
 
 @dp.message_handler(commands=['start'])
 async def send_welcome(message: types.Message):
-    await message.answer("Hi!\nI am a bot that will help you monitor your workouts.")
+    await message.answer("Hi!\nI am a bot that will help you monitor your workouts.", reply_markup=kb.main_markup)
     user = (message.from_user.id, message.from_user.username)
     async with aiohttp.ClientSession() as session:
         async with session.post(f"http://localhost:8000/add_user/", json = user) as response:
@@ -107,10 +108,38 @@ async def answer_q4(message: types.Message, state: FSMContext):
     await state.finish()
 
 
-@dp.message_handler(Text(equals = ["Delete workout"]))
+@dp.message_handler(Text(equals = ["Delete workout"]), state = None)
 async def echo(message: types.Message):
 
-    await message.answer("Choose workout")
+    await message.answer("Enter workout name and workout date to delete(Like 'workout name' - 'workout date')")
+    async with aiohttp.ClientSession() as session:
+        async with session.get(f"http://localhost:8000/see_workouts/?u_id={message.from_user.id}") as response:
+
+            print("Status:", response.status)
+
+            html = await response.text()
+            html = json.loads(html)
+            for w in html:
+                my_string = ''
+                my_string += w['workout']['name']+ '\n' + w['workout']['date'] + '\n' + w['workout']['time'] + '\n'
+                await message.answer(my_string)
+    await DeleteWorkout.Q1.set()
+
+
+@dp.message_handler(state=DeleteWorkout.Q1)
+async def answer_del(message: types.Message, state: FSMContext):
+    answer = message.text
+    name, date = answer.split(' - ')
+
+    async with aiohttp.ClientSession() as session:
+        async with session.get(f"http://localhost:8000/delete_workout/?data={date}&name={name}") as response:
+
+            print("Status:", response.status)
+
+            html = await response.text()
+            #html = json.loads(html)
+            
+
 
 
 @dp.message_handler(Text(equals = ["See my workouts"]))
